@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Round any Number to X</title>
+	</head>
+	<body onload="setStartValues()">
+		<label for="roundThis">Number to round:</label>
+		<input type="number" id="roundThis" />
+		<br />
+		<label for="roundTo">Round to nearest:</label>
+		<input type="number" id="roundTo" required="required" min="1" onkeydown="CheckGoal(this, event)" />
+		<br />
+		<button id="btnRound" onclick="RoundNumbers()">Round!</button>
+		<span id="answerSpan"></span>
+		<br />
+		<br />
+		<span id="expandCollapseSpan" onclick="ShowNarrative()" style="cursor: pointer">+&nbsp;</span><span id="narrSpan" onclick="ShowNarrative()" style="text-decoration: underline; color: blue; cursor: pointer">Show Narrative</span>
+		<br />
+		<div id="narrative" style="display: none; width: 75%">
+			<ol>
+				<li>I started by looking at what the inputs and outputs needed to be. "Make [number] round to the nearest [target]" means two numbers would be the input, and the output should show the nearest multiple of the target in a way the user can understand.</li>
+				<br />
+				<li>The most obvious thing is to keep up with the quotient of the number divided by the target so I can know which multiple of the target to use. Looking at the remainder in decimal form will determine whether to round up or down. If rounding up, then the quotient will need to be incremented before multiplying. Otherwise, simply multiply the target by the quotient.</li>
+				<br />
+				<li>After multiplication, the product needs to be checked for a zero value. If so, the function should return the target.</li>
+				<br />
+				<li>Rounding negative numbers threw me for a loop at first. In particular, -1 rounded to the nearest 2 resulted in 2 instead of -2. While using the absolute value was definitely the answer, I tried it in too many places (in the middle of if statements, arithmetic, etc.) before realizing that I could just perform it on the quotient and check the number for a negative at the end.</li>
+				<br />
+				<li>After that worked, I went back to add data validation such as no blank inputs and error checking/handling such as positive integers as the target.</li>
+			</ol>
+		</div>
+		
+		<script>
+			var showNarr = false;
+		
+			function setStartValues() {
+				document.getElementById('roundThis').value = 0;
+				document.getElementById('roundTo').value = 1;
+			}
+			function RoundNumbers() {
+				if (CriteriaMet()) {
+					var toRound = document.getElementById('roundThis').value;
+					var goal = document.getElementById('roundTo').value;
+					var answer;
+					var quotient = Math.abs(toRound / goal);
+					var factor = Math.floor(quotient);
+					var remainder = quotient - factor;
+					if (remainder >= 0.5)
+						answer = goal * ++factor;
+					else
+						answer = goal * factor;
+					if (answer == 0)
+						answer = goal;
+					if (toRound < 0)
+						answer *= -1;
+					document.getElementById('answerSpan').innerText = toRound + ' rounds to ' + answer;
+				}
+			}
+			
+			function CriteriaMet() {
+				var roundFromElement = document.getElementById('roundThis');
+				var roundToElement = document.getElementById('roundTo');
+				
+				if (!roundFromElement.value) {
+					alert('Please select a value to round.');
+					roundFromElement.value = 0;
+					roundFromElement.focus();
+					return false;
+				}
+				if (!roundToElement.value) {
+					alert('Please select a value to which to round.');
+					roundToElement.value = 1;
+					roundToElement.focus();
+					return false;
+				}
+				var goal = roundToElement.value;
+				if (goal == 0) {
+					alert('Cannot round to 0.');
+					roundToElement.value = 1;
+					roundToElement.focus();
+					return false;
+				}
+				if (goal < 0) {
+					alert('Must round to a positive integer.');
+					roundToElement.value = 1;
+					roundToElement.focus();
+					return false;
+				}
+				if (goal % 1 != 0) {
+					alert('Must round to an integer.');
+					roundToElement.value = Math.floor(goal);
+					roundToElement.focus();
+					return false;
+				}
+				return true;
+			}
+			
+			function CheckGoal(input, e) {
+				if (input.value < 1)
+					input.value = 1;
+			}
+			
+			function ShowNarrative() {
+				showNarr = !showNarr;
+				if (showNarr) {
+					document.getElementById('narrative').style.display = '';
+					document.getElementById('narrSpan').innerText = 'Hide Narrative';
+					document.getElementById('expandCollapseSpan').innerText = '- ';
+				}
+				else {
+					document.getElementById('narrative').style.display = 'none';
+					document.getElementById('narrSpan').innerText = 'Show Narrative';
+					document.getElementById('expandCollapseSpan').innerText = '+ ';
+				}
+			}
+		</script>
+	</body>
+</html>

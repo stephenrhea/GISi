@@ -1,0 +1,19 @@
+.narrativeHide
+{
+	display: none;
+}
+.narrativeShow
+{
+	display: inline;
+	width: 75%;
+}
+#expandCollapseSpan
+{
+	cursor: pointer;
+}
+#narrSpan
+{
+	text-decoration: underline;
+	color: blue;
+	cursor: pointer;
+}
